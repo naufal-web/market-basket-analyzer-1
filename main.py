@@ -117,3 +117,15 @@ def display_products_and_stocks(product_distinctive_list, product_stock_list, mi
     for product, stock in zip(product_distinctive_list, product_stock_list):
         if minimal_support <= stock:
             st.write(f"{product} {stock} pcs")
+
+
+with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
+    display_partial_data(num, csv_file)
+
+product_list = create_product_list(num, csv_file)
+product_frequent_list = create_product_frequent_list(product_list)
+product_distinctive_list = create_product_distinctive_list(product_frequent_list)
+product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
+
+with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup}"):
+    display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
