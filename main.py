@@ -153,6 +153,3 @@ try:
         display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
 except ValueError:
     pass
-
-
-
