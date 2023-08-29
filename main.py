@@ -31,10 +31,13 @@ with st.expander("Deskripsi file CSV"):
 num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
 num = int(num)
 
+# atur logika variabel num
 if num <= 0:
     st.write("Angka tidak valid")
 else:
     st.write("Angka valid")
+
+
 
 
 
