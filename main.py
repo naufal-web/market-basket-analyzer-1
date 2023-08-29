@@ -21,60 +21,17 @@ try:
 
     # tampilkan fitur deskripsi file
     with st.expander("Deskripsi file CSV"):
-        st.write(f"Jumlah baris data terdiri atas {len(csv_readable_file)} baris")
+        st.write(f"Jumlah baris data terdiri atas {len(csv_readable_file)} baris data")
+        st.write(f"Jumlah kolom data terdiri atas {len(csv_readable_file.columns)} kolom")
 
     # deklarasikan variabel num
     # num = 0
 
-    num = 0
-    min_sup = 0
-
-    col1, col2, col3 = st.columns([0.3, 0.3, 0.4])
-
-    with col1:
-        st.button("Masukkan dengan angka bilangan bulat", key="integer")
-    with col2:
-        st.button("Masukkan dengan angka persentase", key="float")
-
-    if st.session_state["float"]:
-        sup_threshold_percentage = st.text_input("Masukkan angka desimal yang ditetapkan sebagai support threshold percentage")
-
-        sup_threshold = int(sup_threshold_percentage)
-        num = sup_threshold * len(csv_readable_file) / 100
-        num = round(num)
-
-    elif st.session_state["integer"]:
-        # deklarasikan variabel num untuk menyimpan data berupa angka padahal string
-        num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
-        try:
-            num = int(num)
-        except ValueError:
-            st.write("Angka belum diinput oleh Anda")
-
-        # atur logika variabel num
-        try:
-            if num <= 0:
-                st.write("Angka tidak valid")
-            else:
-                st.write("Angka valid")
-        except TypeError:
-            pass
-
-        min_sup = st.text_input("Masukkan nilai minimal support")
-        try:
-            min_sup = int(min_sup)
-        except ValueError:
-            st.write("Angka belum diinput oleh Anda")
-
-        try:
-            if min_sup <= 0:
-                st.write("Angka tidak valid")
-            else:
-                st.write("Angka valid")
-        except TypeError:
-            pass
-    else:
-        pass
+    sup_threshold_percentage = st.text_input("Masukkan angka dalam persen (%) yang akan digunakan untuk proses "
+                                             "analisis")
+    sup_threshold = int(sup_threshold_percentage)
+    num = len(csv_readable_file)
+    min_sup = round(num * sup_threshold / 100)
 
     # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
     def display_partial_data(number, file):
@@ -145,35 +102,28 @@ try:
 
 
     # deklarasikan fitur tampilkan produk beserta stok yang terjual berdasarkan minimal support yang ditetapkan user
-    def display_products_and_stocks(product_distinctive_list, product_stock_list, minimal_support):
-        product_distinctive_list = product_distinctive_list
-        product_stock_list = product_stock_list
+    def create_stock_based_products(product_distinctive_list, product_stock_list, minimal_support, number):
+        number = number
         minimal_support = minimal_support
-
+        min_sup_list = []
         for product, stock in zip(product_distinctive_list, product_stock_list):
             try:
                 if minimal_support <= stock:
-                    st.write(f"{product} {stock} pcs")
-                else:
-                    pass
+                    min_sup_list.append(f"{product} {stock} pcs {round(stock/number * 100)}%")
             except TypeError:
-                st.write("Angka minimal support belum dimasukkan")
+                pass
+        return min_sup_list
 
-    try:
-        if num >= 0:
-            with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
-                display_partial_data(num, csv_readable_file)
+    product_list = create_product_list(int(num), csv_readable_file)
+    product_frequent_list = create_product_frequent_list(product_list)
+    product_distinctive_list = create_product_distinctive_list(product_frequent_list)
+    product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
+    min_sup_product_list = create_stock_based_products(product_distinctive_list, product_stock_list, min_sup, num)
+    one_itemset_list = []
 
-            product_list = create_product_list(int(num), csv_readable_file)
-            product_frequent_list = create_product_frequent_list(product_list)
-            product_distinctive_list = create_product_distinctive_list(product_frequent_list)
-            product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
+    with st.expander(f"Tampilan data produk dengan minimal support sebesar {str(min_sup)} pcs"):
+        for min_sup_product in min_sup_product_list:
+            st.write(min_sup_product)
 
-            with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup} pcs"):
-                display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
-        else:
-            pass
-    except TypeError:
-        pass
 except ValueError:
     pass
