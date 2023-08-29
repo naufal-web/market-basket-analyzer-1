@@ -37,8 +37,13 @@ if num <= 0:
 else:
     st.write("Angka valid")
 
+# deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
+def display_partial_data(number, file):
+    # ambil data number ke dalam variabel number
+    # ambil data file ke dalam variabel file
+    number = number
+    file = file
+    readable_file = pd.read_csv(file)
 
-
-
-
-
+    first_transaction = readable_file[:number]
+    st.write(first_transaction[:10])
