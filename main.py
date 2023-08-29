@@ -20,3 +20,22 @@ csv_readable_file = pd.read_csv(csv_file)
 with st.expander("Tampilkan file CSV"):
     st.write(csv_readable_file)
 
+# tampilkan fitur deskripsi file
+with st.expander("Deskripsi file CSV"):
+    st.write(f"Jumlah baris data terdiri atas {len(csv_readable_file)} baris")
+
+# deklarasikan variabel num
+# num = 0
+
+# deklarasikan variabel num untuk menyimpan data berupa angka padahal string
+num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
+num = int(num)
+
+if num <= 0:
+    st.write("Angka tidak valid")
+else:
+    st.write("Angka valid")
+
+
+
+
