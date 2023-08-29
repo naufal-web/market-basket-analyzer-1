@@ -132,8 +132,13 @@ try:
         minimal_support = minimal_support
 
         for product, stock in zip(product_distinctive_list, product_stock_list):
-            if minimal_support <= stock:
-                st.write(f"{product} {stock} pcs")
+            try:
+                if minimal_support <= stock:
+                    st.write(f"{product} {stock} pcs")
+                else:
+                    pass
+            except TypeError:
+                st.write("Angka minimal support belum dimasukkan")
 
 
     with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
@@ -144,7 +149,7 @@ try:
     product_distinctive_list = create_product_distinctive_list(product_frequent_list)
     product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
 
-    with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup}"):
+    with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup} pcs"):
         display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
 except ValueError:
     pass
