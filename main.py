@@ -26,35 +26,48 @@ try:
     # deklarasikan variabel num
     # num = 0
 
-    # deklarasikan variabel num untuk menyimpan data berupa angka padahal string
-    num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
-    try:
-        num = int(num)
-    except ValueError:
-        st.write("Angka belum diinput oleh Anda")
+    num = 0
+    min_sup = 0
 
-    # atur logika variabel num
-    try:
-        if num <= 0:
-            st.write("Angka tidak valid")
-        else:
-            st.write("Angka valid")
-    except TypeError:
+    col1, col2, col3 = st.columns([0.3, 0.3, 0.4])
+
+    with col1:
+        st.button("Masukkan dengan angka bilangan bulat", key="integer")
+    with col2:
+        st.button("Masukkan dengan angka desimal", key="float")
+
+    if st.session_state["float"]:
         pass
+    else:
+        # deklarasikan variabel num untuk menyimpan data berupa angka padahal string
+        num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
+        try:
+            num = int(num)
+        except ValueError:
+            st.write("Angka belum diinput oleh Anda")
 
-    min_sup = st.text_input("Masukkan nilai minimal support")
-    try:
-        min_sup = int(min_sup)
-    except ValueError:
-        st.write("Angka belum diinput oleh Anda")
+        # atur logika variabel num
+        try:
+            if num <= 0:
+                st.write("Angka tidak valid")
+            else:
+                st.write("Angka valid")
+        except TypeError:
+            pass
 
-    try:
-        if min_sup <= 0:
-            st.write("Angka tidak valid")
-        else:
-            st.write("Angka valid")
-    except TypeError:
-        pass
+        min_sup = st.text_input("Masukkan nilai minimal support")
+        try:
+            min_sup = int(min_sup)
+        except ValueError:
+            st.write("Angka belum diinput oleh Anda")
+
+        try:
+            if min_sup <= 0:
+                st.write("Angka tidak valid")
+            else:
+                st.write("Angka valid")
+        except TypeError:
+            pass
 
 
     # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
