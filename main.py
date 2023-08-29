@@ -40,7 +40,7 @@ try:
         sup_threshold_percentage = st.text_input("Masukkan angka desimal yang ditetapkan sebagai support threshold percentage")
 
         sup_threshold = int(sup_threshold_percentage)
-        num = int((sup_threshold * len(csv_readable_file)) / 100)
+        num = sup_threshold * len(csv_readable_file) / 100
         num = round(num)
 
     elif st.session_state["integer"]:
@@ -74,7 +74,7 @@ try:
         except TypeError:
             pass
     else:
-        st.write("Invalid logic control")
+        pass
 
     # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
     def display_partial_data(number, file):
@@ -159,16 +159,21 @@ try:
             except TypeError:
                 st.write("Angka minimal support belum dimasukkan")
 
+    try:
+        if num >= 0:
+            with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
+                display_partial_data(num, csv_readable_file)
 
-    with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
-        display_partial_data(num, csv_readable_file)
+            product_list = create_product_list(int(num), csv_readable_file)
+            product_frequent_list = create_product_frequent_list(product_list)
+            product_distinctive_list = create_product_distinctive_list(product_frequent_list)
+            product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
 
-    product_list = create_product_list(int(num), csv_readable_file)
-    product_frequent_list = create_product_frequent_list(product_list)
-    product_distinctive_list = create_product_distinctive_list(product_frequent_list)
-    product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
-
-    with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup} pcs"):
-        display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
+            with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup} pcs"):
+                display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
+        else:
+            pass
+    except TypeError:
+        pass
 except ValueError:
     pass
