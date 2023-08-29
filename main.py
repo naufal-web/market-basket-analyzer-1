@@ -11,8 +11,12 @@ st.subheader("Powered by Naufal-Web")
 
 # tampilkan fitur unggah file
 with st.expander("Unggah file CSV"):
-    csv_file_readable = st.file_uploader("Unggah file CSV", type="csv")
+    csv_file = st.file_uploader("Unggah file CSV", type="csv")
+
+# deklarasikan variabel file csv
+csv_readable_file = pd.read_csv(csv_file)
 
 # tampilkan fitur display file
 with st.expander("Tampilkan file CSV"):
-    st.write(pd.read_csv(csv_file_readable))
+    st.write(csv_readable_file)
+
