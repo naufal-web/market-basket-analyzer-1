@@ -45,6 +45,7 @@ if min_sup <=0:
 else:
     st.write("Angka valid")
 
+
 # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
 def display_partial_data(number, file):
     # ambil data number ke dalam variabel number
@@ -55,6 +56,7 @@ def display_partial_data(number, file):
 
     first_transaction = readable_file[:number]
     st.write(first_transaction)
+
 
 # deklarasikan fitur buat list product berdasarkan angka yang diinput oleh user serta hasilkan list tersebut
 def create_product_list(number, file):
@@ -73,6 +75,7 @@ def create_product_list(number, file):
 
     return temp
 
+
 # deklarasikan fitur buat list produk yang sering dibeli dari list produk dengan list bersarang
 def create_product_frequent_list(product_list):
     product_list = product_list
@@ -84,6 +87,7 @@ def create_product_frequent_list(product_list):
 
     return product_frequent_list
 
+
 # deklarasikan fitur buat list produk dari list produk yang sering dibeli serta hasilkan list tersebut
 def create_product_distinctive_list(product_frequent_list):
     product_frequent_list = product_frequent_list
@@ -94,6 +98,7 @@ def create_product_distinctive_list(product_frequent_list):
             product_distinctive_list.append(product)
 
     return product_distinctive_list
+
 
 # deklarasikan fitur buat list stok keluar produk dari list produk dan list produk yang sering dibeli serta hasilkan
 # list tersebut
@@ -107,6 +112,7 @@ def create_product_stock_list(product_distinctive_list, product_frequent_list):
         product_stock_list.append(product_frequent_list.count(product))
 
     return product_stock_list
+
 
 # deklarasikan fitur tampilkan produk beserta stok yang terjual berdasarkan minimal support yang ditetapkan user
 def display_products_and_stocks(product_distinctive_list, product_stock_list, minimal_support):
