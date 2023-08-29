@@ -34,11 +34,16 @@ try:
     with col1:
         st.button("Masukkan dengan angka bilangan bulat", key="integer")
     with col2:
-        st.button("Masukkan dengan angka desimal", key="float")
+        st.button("Masukkan dengan angka persentase", key="float")
 
     if st.session_state["float"]:
-        pass
-    else:
+        sup_threshold_percentage = st.text_input("Masukkan angka desimal yang ditetapkan sebagai support threshold percentage")
+
+        sup_threshold = int(sup_threshold_percentage)
+        num = int((sup_threshold * len(csv_readable_file)) / 100)
+        num = round(num)
+
+    elif st.session_state["integer"]:
         # deklarasikan variabel num untuk menyimpan data berupa angka padahal string
         num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
         try:
@@ -68,7 +73,8 @@ try:
                 st.write("Angka valid")
         except TypeError:
             pass
-
+    else:
+        st.write("Invalid logic control")
 
     # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
     def display_partial_data(number, file):
