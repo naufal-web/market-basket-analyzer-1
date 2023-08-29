@@ -29,21 +29,33 @@ with st.expander("Deskripsi file CSV"):
 
 # deklarasikan variabel num untuk menyimpan data berupa angka padahal string
 num = st.text_input("Masukkan jumlah data yang akan digunakan untuk proses analisis")
-num = int(num)
-
-min_sup = st.text_input("Masukkan nilai minimal support")
-min_sup = int(min_sup)
+try:
+    num = int(num)
+except ValueError:
+    st.write("Angka belum diinput oleh Anda")
 
 # atur logika variabel num
-if num <= 0:
-    st.write("Angka tidak valid")
-else:
-    st.write("Angka valid")
+try:
+    if num <= 0:
+        st.write("Angka tidak valid")
+    else:
+        st.write("Angka valid")
+except TypeError:
+    pass
 
-if min_sup <=0:
-    st.write("Angka tidak valid")
-else:
-    st.write("Angka valid")
+min_sup = st.text_input("Masukkan nilai minimal support")
+try:
+    min_sup = int(min_sup)
+except ValueError:
+    st.write("Angka belum diinput oleh Anda")
+
+try:
+    if min_sup <= 0:
+        st.write("Angka tidak valid")
+    else:
+        st.write("Angka valid")
+except TypeError:
+    pass
 
 
 # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
@@ -52,10 +64,12 @@ def display_partial_data(number, file):
     # ambil data file ke dalam variabel file
     number = number
     file = file
-    readable_file = pd.read_csv(file)
-
-    first_transaction = readable_file[:number]
-    st.write(first_transaction)
+    # readable_file = pd.read_csv(file)
+    try:
+        first_transaction = file[:number]
+        st.write(first_transaction)
+    except TypeError:
+        pass
 
 
 # deklarasikan fitur buat list product berdasarkan angka yang diinput oleh user serta hasilkan list tersebut
@@ -63,15 +77,13 @@ def create_product_list(number, file):
     # ambil data number ke dalam variabel number
     # ambil data file ke dalam variabel file
     number = number
-    file = file
-    readable_file = pd.read_csv(file)
+    readable_file = file
 
     temp = []
 
     for index, row in readable_file[:number].iterrows():
-        products = row["produk"].title()
-        product_list = products.split(",")
-        temp.append(product_list)
+        products = row["produk"].title().split(",")
+        temp.append(products)
 
     return temp
 
@@ -126,12 +138,13 @@ def display_products_and_stocks(product_distinctive_list, product_stock_list, mi
 
 
 with st.expander(f"Tampilkan file CSV dengan {num} transaksi"):
-    display_partial_data(num, csv_file)
+    display_partial_data(num, csv_readable_file)
 
-product_list = create_product_list(num, csv_file)
+product_list = create_product_list(num, csv_readable_file)
 product_frequent_list = create_product_frequent_list(product_list)
 product_distinctive_list = create_product_distinctive_list(product_frequent_list)
 product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
+
 
 with st.expander(f"Tampilkan daftar produk berserta stok yang terjual dengan minimal support sebesar {min_sup}"):
     display_products_and_stocks(product_distinctive_list, product_stock_list, min_sup)
