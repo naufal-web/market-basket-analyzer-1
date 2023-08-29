@@ -13,3 +13,6 @@ st.subheader("Powered by Naufal-Web")
 with st.expander("Unggah file CSV"):
     csv_file_readable = st.file_uploader("Unggah file CSV", type="csv")
 
+# tampilkan fitur display file
+with st.expander("Tampilkan file CSV"):
+    st.write(pd.read_csv(csv_file_readable))
