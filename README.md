@@ -7,7 +7,10 @@ Input yang digunakan adalah file .csv
 
 **Ingat!! Default file dari aplikasi ini bisa Anda cari di kaggle dengan keyword transaksi.csv atau link berikut** 
 
-https://www.kaggle.com/datasets/dedenfuji/pharmacy-transaction-data**
+https://www.kaggle.com/datasets/dedenfuji/pharmacy-transaction-data
+
+Tidak perlu khawatir jikalau lupa atau salah file,
+direktori csv/transaksi.csv sudah tersedia di dalam proyek aplikasi web ini.
 
 Tidak hanya itu input user sangat **penting** melalui 3 input
 
