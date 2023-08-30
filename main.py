@@ -121,9 +121,12 @@ try:
     min_sup_product_list = create_stock_based_products(product_distinctive_list, product_stock_list, min_sup, num)
     one_itemset_list = []
 
-    with st.expander(f"Tampilan data produk dengan minimal support sebesar {str(min_sup)} pcs"):
+    with st.expander(f"Tampilan data produk dengan itemset = 1 dan minimal support sebesar {round(min_sup/num*100)}% "):
         for min_sup_product in min_sup_product_list:
             st.write(min_sup_product)
+
+    with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar {round(min_sup/num*100)}% "):
+        pass
 
 except ValueError:
     pass
