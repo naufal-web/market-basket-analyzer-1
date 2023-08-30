@@ -106,27 +106,50 @@ try:
         number = number
         minimal_support = minimal_support
         min_sup_list = []
+        one_itemset_list = []
         for product, stock in zip(product_distinctive_list, product_stock_list):
             try:
                 if minimal_support <= stock:
                     min_sup_list.append(f"{product} {stock} pcs {round(stock/number * 100)}%")
+                    one_itemset_list.append(product)
             except TypeError:
                 pass
-        return min_sup_list
+        return min_sup_list, one_itemset_list
 
     product_list = create_product_list(int(num), csv_readable_file)
     product_frequent_list = create_product_frequent_list(product_list)
     product_distinctive_list = create_product_distinctive_list(product_frequent_list)
     product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
-    min_sup_product_list = create_stock_based_products(product_distinctive_list, product_stock_list, min_sup, num)
-    one_itemset_list = []
+    min_sup_product_list, one_itemset_list = create_stock_based_products(product_distinctive_list, product_stock_list, min_sup, num)
+
 
     with st.expander(f"Tampilan data produk dengan itemset = 1 dan minimal support sebesar {round(min_sup/num*100)}% "):
-        for min_sup_product in min_sup_product_list:
-            st.write(min_sup_product)
+        st.info(f"Jumlah produk min-sup dengan itemset 1 : {len(one_itemset_list)}")
+        for one_itemset in one_itemset_list:
+            st.write(one_itemset)
+
 
     with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar {round(min_sup/num*100)}% "):
-        pass
+        st.write("Saat ini belum tersedia")
+
+    with st.expander(f"Gambaran Proses Ke-1"):
+        st.info(f"Jumlah produk : {len(product_distinctive_list)}")
+        for product_key in product_distinctive_list:
+            st.write(product_key)
+
+    two_itemset_list_1 = []
+
+    for i in range(len(one_itemset_list)):
+        for j in range(len(one_itemset_list)):
+            if one_itemset_list[i] == one_itemset_list[j]:
+                pass
+            else:
+                two_itemset_list_1.append([one_itemset_list[i], one_itemset_list[j]])
+
+    with st.expander(f"Gambaran Proses Ke-2"):
+        for two_itemset in two_itemset_list_1:
+            st.write(two_itemset)
+
 
 except ValueError:
     pass
