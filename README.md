@@ -5,7 +5,9 @@ Ini adalah aplikasi pembaca file csv sekaligus analisis transaksi dari file ters
 
 Input yang digunakan adalah file .csv
 
-**Ingat!! Default file dari aplikasi ini bisa Anda cari di kaggle dengan keyword transaksi.csv atau link berikut**
+**Ingat!! Default file dari aplikasi ini bisa Anda cari di kaggle dengan keyword transaksi.csv atau link berikut** 
+
+https://www.kaggle.com/datasets/dedenfuji/pharmacy-transaction-data**
 
 Tidak hanya itu input user sangat **penting** melalui 3 input
 
