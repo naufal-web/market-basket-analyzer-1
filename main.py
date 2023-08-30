@@ -105,37 +105,32 @@ try:
     def create_stock_based_products(product_distinctive_list, product_stock_list, minimal_support, number):
         number = number
         minimal_support = minimal_support
+        product_distinctive_list = product_distinctive_list
+        product_stock_list = product_stock_list
         min_sup_list = []
-        one_itemset_list = []
+        itemset_list = []
         for product, stock in zip(product_distinctive_list, product_stock_list):
             try:
                 if minimal_support <= stock:
                     min_sup_list.append(f"{product} {stock} pcs {round(stock/number * 100)}%")
-                    one_itemset_list.append(product)
+                    itemset_list.append(product)
             except TypeError:
                 pass
-        return min_sup_list, one_itemset_list
+        return min_sup_list, itemset_list
 
     product_list = create_product_list(int(num), csv_readable_file)
     product_frequent_list = create_product_frequent_list(product_list)
     product_distinctive_list = create_product_distinctive_list(product_frequent_list)
     product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
-    min_sup_product_list, one_itemset_list = create_stock_based_products(product_distinctive_list, product_stock_list, min_sup, num)
+    min_sup_product_list, one_itemset_list = create_stock_based_products(product_distinctive_list, product_stock_list,
+                                                                         min_sup, num)
 
+    # st.info(len(product_frequent_list))
 
     with st.expander(f"Tampilan data produk dengan itemset = 1 dan minimal support sebesar {round(min_sup/num*100)}% "):
         st.info(f"Jumlah produk min-sup dengan itemset 1 : {len(one_itemset_list)}")
         for one_itemset in one_itemset_list:
             st.write(one_itemset)
-
-
-    with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar {round(min_sup/num*100)}% "):
-        st.write("Saat ini belum tersedia")
-
-    with st.expander(f"Gambaran Proses Ke-1"):
-        st.info(f"Jumlah produk : {len(product_distinctive_list)}")
-        for product_key in product_distinctive_list:
-            st.write(product_key)
 
     two_itemset_list = []
 
@@ -146,26 +141,37 @@ try:
             else:
                 two_itemset_list.append([one_itemset_list[i], one_itemset_list[j]])
 
-    with st.expander(f"Gambaran Proses Ke-2"):
-        st.info(f"Jumlah data dengan itemset = 2 sebanyak {len(two_itemset_list)}")
-        for i in range(len(two_itemset_list)):
-            st.write(f"{two_itemset_list[i][0]} {two_itemset_list[i][1]}")
 
-    two_itemset_list = [list(two_itemset_list)
-                        for two_itemset_list in set(frozenset(two_itemset)
-                        for two_itemset in two_itemset_list)]
+    two_dist_itemset_list = [list(two_itemset_list) for two_itemset_list in set(frozenset(two_itemset) for two_itemset
+                                                                           in two_itemset_list)]
 
     st.info(len(two_itemset_list))
 
-    temp = list()
-    two_itemset_list = sorted(two_itemset_list)
+    two_frequent_item_list = []
+    count = 0
+    for product in product_list:
+        for index in range(len(two_itemset_list)):
+            if two_itemset_list[index][0] and two_itemset_list[index][1] in product:
+                if two_itemset_list[index][0] != two_itemset_list[index][1]:
+                    count = count + 1
+                    two_frequent_item_list.append([two_itemset_list[index][0],
+                                                   two_itemset_list[index][1]])
+                else:
+                    pass
+            else:
+                pass
 
-    for two_itemset in two_itemset_list:
-        st.write(two_itemset)
-        temp.append([product_frequent_list.count(two_itemset[0]), product_frequent_list.count(two_itemset[1])])
+    st.info(len(two_dist_itemset_list))
+    st.info(len(two_frequent_item_list))
 
-    for itemset, tmp in zip(two_itemset_list, temp):
-        st.write(f"{itemset[0]} {tmp[0]} pcs | {itemset[1]} {tmp[1]} pcs")
+    two_itemset_num = create_product_stock_list(two_dist_itemset_list, two_frequent_item_list)
+    two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(two_dist_itemset_list, two_itemset_num,
+                                                                                     min_sup, num)
+
+    with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar {round(min_sup/num*100)}% "):
+        st.info(f"Jumlah produk min-sup dengan itemset 2 : {len(two_itemset_min_sup_product_list)}")
+        for two_fixed_itemset in two_itemset_list:
+            st.write(f"{two_fixed_itemset[0], two_fixed_itemset[1]}")
 
 except ValueError:
     pass
