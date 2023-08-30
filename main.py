@@ -137,19 +137,35 @@ try:
         for product_key in product_distinctive_list:
             st.write(product_key)
 
-    two_itemset_list_1 = []
+    two_itemset_list = []
 
     for i in range(len(one_itemset_list)):
         for j in range(len(one_itemset_list)):
             if one_itemset_list[i] == one_itemset_list[j]:
                 pass
             else:
-                two_itemset_list_1.append([one_itemset_list[i], one_itemset_list[j]])
+                two_itemset_list.append([one_itemset_list[i], one_itemset_list[j]])
 
     with st.expander(f"Gambaran Proses Ke-2"):
-        for two_itemset in two_itemset_list_1:
-            st.write(two_itemset)
+        st.info(f"Jumlah data dengan itemset = 2 sebanyak {len(two_itemset_list)}")
+        for i in range(len(two_itemset_list)):
+            st.write(f"{two_itemset_list[i][0]} {two_itemset_list[i][1]}")
 
+    two_itemset_list = [list(two_itemset_list)
+                        for two_itemset_list in set(frozenset(two_itemset)
+                        for two_itemset in two_itemset_list)]
+
+    st.info(len(two_itemset_list))
+
+    temp = list()
+    two_itemset_list = sorted(two_itemset_list)
+
+    for two_itemset in two_itemset_list:
+        st.write(two_itemset)
+        temp.append([product_frequent_list.count(two_itemset[0]), product_frequent_list.count(two_itemset[1])])
+
+    for itemset, tmp in zip(two_itemset_list, temp):
+        st.write(f"{itemset[0]} {tmp[0]} pcs | {itemset[1]} {tmp[1]} pcs")
 
 except ValueError:
     pass
