@@ -1,8 +1,9 @@
 try:
     import streamlit as st
     import pandas as pd
+    import random as rd
 except ModuleNotFoundError:
-    print("Kedua modul belum ada")
+    print("Ketiga modul belum ada")
 
 # tampilkan judul program
 st.title("Market Basket Analyzer - Modified 1")
@@ -16,7 +17,7 @@ try:
     # deklarasikan variabel file csv
     csv_readable_file = pd.read_csv(csv_file)
     # tampilkan fitur display file
-    with st.expander("Tampilkan file CSV"):
+    with st.expander("Tampilan file CSV"):
         st.write(csv_readable_file)
 
     # tampilkan fitur deskripsi file
@@ -24,19 +25,73 @@ try:
         st.write(f"Jumlah baris data terdiri atas {len(csv_readable_file)} baris data")
         st.write(f"Jumlah kolom data terdiri atas {len(csv_readable_file.columns)} kolom")
 
+    def function_input(truth_value):
+        freq_item_set = 0
+        min_sup_percentage = 0
+        min_con_percentage = 0
+        value = truth_value
+        if value == 0:
+            while True:
+                freq_item_set = st.text_input("Masukkan jumlah frequent itemset")
+                min_sup_percentage = st.text_input("Masukkan minimal support dalam persen (%) "
+                                                   "yang akan digunakan untuk proses analisis.")
+                min_con_percentage = st.text_input("Masukkan minimal confidence dalam persen (%) "
+                                                   "yang akan digunakan untuk proses analisis")
+                if int(freq_item_set) == 0 and int(min_sup_percentage) == 0 and int(min_con_percentage) == 0:
+                    continue
+                else:
+                    break
+        elif value == 1:
+            i = 0
+            while True:
+                freq_item_set = rd.randint(1, 190)
+                min_sup_percentage = rd.randint(1, 30)
+                min_con_percentage = rd.randint(1, 30)
+                i += 1
+                if freq_item_set == 30 and min_sup_percentage >= 3 and min_con_percentage >= 30:
+                    break
+                else:
+                    pass
+        else:
+            pass
+
+        return freq_item_set, min_sup_percentage, min_con_percentage
+
+
+    col1, col2, col3, col4 = st.columns([2, 3, 5, 6])
+    with col1:
+        st.button("User", key="user")
+    with col2:
+        st.button("Computer", key="computer")
+
+    freq_item_set = 0
+    min_sup = 0
+    min_conf = 0
+
+    if st.session_state["user"]:
+        freq_item_set, min_sup, min_conf = function_input(0)
+        st.info(f"""
+        Frequent itemset   : {freq_item_set} \n
+        Minimal support    : {min_sup} \n
+        Minimal confidence : {min_conf} \n
+        """)
+
+    elif st.session_state["computer"]:
+        freq_item_set, min_sup, min_conf = function_input(1)
+        st.info(f"""
+        Frequent itemset   : {freq_item_set}
+        Minimal support    : {min_sup}
+        Minimal confidence : {min_conf}
+        """)
+    else:
+        pass
+
     # deklarasikan variabel num
     # num = 0
-    freq_itemset = st.text_input("Masukkan jumlah frequent itemset")
-    min_sup_percentage = st.text_input("Masukkan minimal support dalam persen (%) "
-                                       "yang akan digunakan untuk proses analisis.")
-    min_con_percentage = st.text_input("Masukkan minimal confidence dalam persen (%) "
-                                       "yang akan digunakan untuk proses analisis")
-
-    freq_itemset = int(freq_itemset)
-    min_sup = int(min_sup_percentage)
-    min_con = int(min_con_percentage)
+    freq_item_set = int(freq_item_set)
+    min_sup = int(min_sup)
+    min_con = int(min_conf)
     count_of_transaction = len(csv_readable_file)
-
 
     # deklarasikan fitur tampilan data berdasarkan angka yang diinput oleh user
     def display_partial_data(number, file):
@@ -137,17 +192,18 @@ try:
     product_stock_list = create_product_stock_list(product_distinctive_list, product_frequent_list)
     min_sup_product_list, one_itemset_list = create_stock_based_products(product_distinctive_list,
                                                                          product_stock_list,
-                                                                         freq_itemset)
+                                                                         freq_item_set)
 
     # st.info(len(product_frequent_list))
-    with st.expander(f"Tampilan data produk dengan itemset = 1 dan minimal support sebesar "
-                     f"{min_sup}% "):
-        if len(one_itemset_list) > 0:
-            st.info(f"Jumlah produk min-sup dengan itemset 1 : {len(one_itemset_list)}")
-            for min_sup_product in min_sup_product_list:
-                st.write(min_sup_product)
-        else:
-            pass
+    if min_sup > 0:
+        with st.expander(f"Tampilan data produk dengan itemset = 1 dan minimal support sebesar "
+                         f"{min_sup}% "):
+            if len(one_itemset_list) > 0:
+                st.info(f"Jumlah produk min-sup dengan itemset 1 : {len(one_itemset_list)}")
+                for min_sup_product in min_sup_product_list:
+                    st.write(min_sup_product)
+            else:
+                pass
 
     two_itemset_list = []
 
@@ -158,8 +214,13 @@ try:
             else:
                 two_itemset_list.append([one_itemset_list[i], one_itemset_list[j]])
 
-    two_dist_itemset_list = [list(two_itemset_list) for two_itemset_list in set(frozenset(two_itemset_list)
+    two_dist_itemset_list = []
+    try:
+        two_dist_itemset_list = [list(two_itemset_list) for two_itemset_list in set(frozenset(two_itemset_list)
                                                                                 for two_itemset in two_itemset_list)]
+    except TypeError:
+        pass
+
     if len(two_itemset_list) > 0:
         st.info(len(two_itemset_list))
     else:
@@ -187,7 +248,7 @@ try:
 
     two_itemset_num = create_product_stock_list(two_dist_itemset_list, two_frequent_item_list)
     two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(two_dist_itemset_list,
-                                                                                     two_itemset_num, freq_itemset)
+                                                                                     two_itemset_num, freq_item_set)
 
     with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar "
                      f"{round(min_sup)}% "):
@@ -200,8 +261,7 @@ try:
 
     with st.expander("Simpulan dan saran"):
         for one_itemset in one_itemset_list:
-            st.write(f"Restock barang ini ya : {one_itemset} ")
-
+            st.write(f"Restock barang {one_itemset} ")
 
 except ValueError:
     st.write("Selamat mencoba")
