@@ -49,7 +49,7 @@ try:
                 min_sup_percentage = rd.randint(1, 30)
                 min_con_percentage = rd.randint(1, 30)
                 i += 1
-                if freq_item_set == 30 and min_sup_percentage >= 3 and min_con_percentage >= 30:
+                if freq_item_set >= 63 and min_sup_percentage >= 10 and min_con_percentage >= 10:
                     break
                 else:
                     pass
