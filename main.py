@@ -106,7 +106,6 @@ Minimal confidence : {min_conf} \n """)
         except TypeError:
             pass
 
-
     # deklarasikan fitur buat list product berdasarkan angka yang diinput oleh user serta hasilkan list tersebut
     def create_product_list(number, file):
         # ambil data number ke dalam variabel number
@@ -116,6 +115,7 @@ Minimal confidence : {min_conf} \n """)
 
         temp = []
 
+        freg_item_set = 0
         for index, row in readable_file[:number].iterrows():
             products = row["produk"].title().split(",")
             temp.append(products)
@@ -153,10 +153,12 @@ Minimal confidence : {min_conf} \n """)
         product_distinctive_list = product_distinctive_list
         product_frequent_list = product_frequent_list
         product_distinctive_list.sort(reverse=False)
+        # num_itemset = num_itemset
         product_stock_list = []
 
         for product in product_distinctive_list:
             product_stock_list.append(product_frequent_list.count(product))
+
 
         return product_stock_list
 
@@ -219,13 +221,23 @@ Minimal confidence : {min_conf} \n """)
     with st.expander("Gambaran data"):
         st.write(two_itemset_list)
 
+    frequent_two_item_list = []
+    count = 0
+
+    for transaction in product_list:
+        for i in range(len(transaction)):
+            for j in range(len(transaction[i])):
+                frequent_two_item_list.append([transaction[i][j], transaction[i][j-1]])
+
+    st.info(f"{len(frequent_two_item_list)}")
+
     # two_dist_itemset_list = []
 
     dist_two_itemset_list = [
         list(two_itemset_list)
         for two_itemset_list in set(frozenset(two_itemset) for two_itemset in two_itemset_list)]
 
-    st.info(f"Jumlah data beda pasangan dengan dengan itemset 2 : {len(two_itemset_list)} ")
+    st.info(f"Jumlah data beda pasangan dengan dengan itemset 2 : {len(dist_two_itemset_list)} ")
 
     def display_count_of_two_itemset():
         if len(two_itemset_list) > 0:
@@ -233,39 +245,22 @@ Minimal confidence : {min_conf} \n """)
         else:
             pass
 
-    frequent_two_item_list = []
-    count = 0
-    for j in range(len(product_list)):
-        for k in range(len(product_list[j])):
-            for i in range(len(two_itemset_list)):
-                if two_itemset_list[i][0] and two_itemset_list[i][1] in product_list[j][k]:
-                    if two_itemset_list[i][0] != two_itemset_list[i][1]:
-                        count = count + 1
-                        frequent_two_item_list.append([two_itemset_list[i][0],
-                                                       two_itemset_list[i][1]])
-                    else:
-                        pass
-                else:
-                    pass
-
-    st.info(len(frequent_two_item_list))
-
-    count = 0
-    for transaction, frequent in zip(product_list, frequent_two_item_list):
-        if frequent in transaction:
-            count = count + 1
+    with st.expander("Keterangan 1"):
+        if len(dist_two_itemset_list) > 0 and len(frequent_two_item_list) > 0:
+            # st.info(dist_two_itemset_list)
+            st.info(len(dist_two_itemset_list))
+            st.info(len(frequent_two_item_list))
         else:
-            break
-    st.info(count)
+            pass
 
-    if len(dist_two_itemset_list) > 0 and len(frequent_two_item_list) > 0:
-        # st.info(dist_two_itemset_list)
-        st.info(len(dist_two_itemset_list))
-        st.info(len(frequent_two_item_list))
-    else:
-        pass
 
-    two_itemset_num = create_product_stock_list(dist_two_itemset_list, frequent_two_item_list)
+    two_itemset_num = []
+
+    for dist_two_itemset in dist_two_itemset_list:
+        two_itemset_num.append(frequent_two_item_list.count(dist_two_itemset))
+
+
+
     two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(dist_two_itemset_list,
                                                                                      two_itemset_num, freq_item_set)
 
