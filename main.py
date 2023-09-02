@@ -13,6 +13,7 @@ st.subheader("Powered by Naufal-Web")
 # tampilkan fitur unggah file
 with st.expander("Unggah file CSV"):
     csv_file = st.file_uploader("Unggah file", type="csv", label_visibility="hidden")
+
 try:
     # deklarasikan variabel file csv
     csv_readable_file = pd.read_csv(csv_file)
@@ -78,11 +79,10 @@ try:
 
     elif st.session_state["computer"]:
         freq_item_set, min_sup, min_conf = function_input(1)
-        st.info(f"""
-        Frequent itemset   : {freq_item_set}
-        Minimal support    : {min_sup}
-        Minimal confidence : {min_conf}
-        """)
+        st.info(f"""\
+Frequent itemset   : {freq_item_set } \n
+Minimal support    : {min_sup} \n
+Minimal confidence : {min_conf} \n """)
     else:
         pass
 
@@ -164,8 +164,8 @@ try:
     # deklarasikan fitur tampilkan produk beserta stok yang terjual berdasarkan minimal support yang ditetapkan user
     def create_stock_based_products(product_distinctive_list, product_stock_list, frequent_itemset):
         frequent_itemset = frequent_itemset
-        product_distinctive_list = product_distinctive_list
-        product_stock_list = product_stock_list
+        product_distinctive_list = product_distinctive_list # list tunggal
+        product_stock_list = product_stock_list # list tunggal
         min_sup_list = []
         itemset_list = []
         for product, stock in zip(product_distinctive_list, product_stock_list):
@@ -214,41 +214,65 @@ try:
             else:
                 two_itemset_list.append([one_itemset_list[i], one_itemset_list[j]])
 
-    two_dist_itemset_list = []
-    try:
-        two_dist_itemset_list = [list(two_itemset_list) for two_itemset_list in set(frozenset(two_itemset_list)
-                                                                                for two_itemset in two_itemset_list)]
-    except TypeError:
-        pass
+    st.info(f"Jumlah data dengan itemset 2 : {len(two_itemset_list)} ")
 
-    if len(two_itemset_list) > 0:
-        st.info(len(two_itemset_list))
-    else:
-        pass
+    with st.expander("Gambaran data"):
+        st.write(two_itemset_list)
 
-    two_frequent_item_list = []
+    # two_dist_itemset_list = []
+
+    dist_two_itemset_list = [
+        list(two_itemset_list)
+        for two_itemset_list in set(frozenset(two_itemset) for two_itemset in two_itemset_list)]
+
+    st.info(f"Jumlah data beda pasangan dengan dengan itemset 2 : {len(two_itemset_list)} ")
+
+    def display_count_of_two_itemset():
+        if len(two_itemset_list) > 0:
+            st.info(len(two_itemset_list))
+        else:
+            pass
+
+    frequent_two_item_list = []
     count = 0
-    for product in product_list:
-        for index in range(len(two_itemset_list)):
-            if two_itemset_list[index][0] and two_itemset_list[index][1] in product:
-                if two_itemset_list[index][0] != two_itemset_list[index][1]:
-                    count = count + 1
-                    two_frequent_item_list.append([two_itemset_list[index][0],
-                                                   two_itemset_list[index][1]])
+    for j in range(len(product_list)):
+        for k in range(len(product_list[j])):
+            for i in range(len(two_itemset_list)):
+                if two_itemset_list[i][0] and two_itemset_list[i][1] in product_list[j][k]:
+                    if two_itemset_list[i][0] != two_itemset_list[i][1]:
+                        count = count + 1
+                        frequent_two_item_list.append([two_itemset_list[i][0],
+                                                       two_itemset_list[i][1]])
+                    else:
+                        pass
                 else:
                     pass
-            else:
-                pass
 
-    if len(two_dist_itemset_list) > 0 and len(two_frequent_item_list) > 0:
-        st.info(len(two_dist_itemset_list))
-        st.info(len(two_frequent_item_list))
+    st.info(len(frequent_two_item_list))
+
+    count = 0
+    for transaction, frequent in zip(product_list, frequent_two_item_list):
+        if frequent in transaction:
+            count = count + 1
+        else:
+            break
+    st.info(count)
+
+    if len(dist_two_itemset_list) > 0 and len(frequent_two_item_list) > 0:
+        # st.info(dist_two_itemset_list)
+        st.info(len(dist_two_itemset_list))
+        st.info(len(frequent_two_item_list))
     else:
         pass
 
-    two_itemset_num = create_product_stock_list(two_dist_itemset_list, two_frequent_item_list)
-    two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(two_dist_itemset_list,
+    two_itemset_num = create_product_stock_list(dist_two_itemset_list, frequent_two_item_list)
+    two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(dist_two_itemset_list,
                                                                                      two_itemset_num, freq_item_set)
+
+    st.info(two_itemset_num)
+    st.info(len(two_itemset_num))
+    st.info(len(two_itemset_list))
+    st.info(len(two_itemset_min_sup_product_list))
 
     with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar "
                      f"{round(min_sup)}% "):
