@@ -24,7 +24,7 @@ try:
     # tampilkan fitur deskripsi file
     with st.expander("Deskripsi file CSV"):
         st.write(f"Jumlah baris data terdiri atas {len(csv_readable_file)} baris data")
-        st.write(f"Jumlah kolom data terdiri atas {len(csv_readable_file.columns)} kolom")
+        st.write(f"Jumlah kolom data terdiri atas {len(csv_readable_file.columns)} kolom data")
 
     def function_input(truth_value):
         freq_item_set = 0
@@ -32,24 +32,29 @@ try:
         min_con_percentage = 0
         value = truth_value
         if value == 0:
-            while True:
-                freq_item_set = st.text_input("Masukkan jumlah frequent itemset")
-                min_sup_percentage = st.text_input("Masukkan minimal support dalam persen (%) "
-                                                   "yang akan digunakan untuk proses analisis.")
-                min_con_percentage = st.text_input("Masukkan minimal confidence dalam persen (%) "
-                                                   "yang akan digunakan untuk proses analisis")
-                if int(freq_item_set) == 0 and int(min_sup_percentage) == 0 and int(min_con_percentage) == 0:
-                    continue
-                else:
-                    break
+            with st.expander("Tampilan input pengguna"):
+                while True:
+                    freq_item_set = st.text_input("Masukkan jumlah frequent itemset")
+                    min_sup_percentage = st.text_input("Masukkan minimal support dalam persen (%) "
+                                                       "yang akan digunakan untuk proses analisis.")
+                    min_con_percentage = st.text_input("Masukkan minimal confidence dalam persen (%) "
+                                                       "yang akan digunakan untuk proses analisis")
+                    if freq_item_set == "  " and min_sup_percentage == "  " and min_con_percentage == "  ":
+                        continue
+                    elif min_sup_percentage == "  " and min_con_percentage == "  ":
+                        continue
+                    elif min_con_percentage == "  ":
+                        continue
+                    else:
+                        break
         elif value == 1:
             i = 0
             while True:
-                freq_item_set = rd.randint(1, 190)
-                min_sup_percentage = rd.randint(1, 30)
-                min_con_percentage = rd.randint(1, 30)
+                freq_item_set = rd.randint(1, 6)
+                min_sup_percentage = rd.randint(1, 5)
+                min_con_percentage = rd.randint(1, 5)
                 i += 1
-                if freq_item_set >= 63 and min_sup_percentage >= 10 and min_con_percentage >= 10:
+                if freq_item_set >= 3 and min_sup_percentage >= 3 and min_con_percentage >= 3:
                     break
                 else:
                     pass
@@ -72,17 +77,17 @@ try:
     if st.session_state["user"]:
         freq_item_set, min_sup, min_conf = function_input(0)
         st.info(f"""
-        Frequent itemset   : {freq_item_set} \n
-        Minimal support    : {min_sup} \n
-        Minimal confidence : {min_conf} \n
+        Frequent itemset   : {freq_item_set} item \n
+        Minimal support    : {min_sup}% \n
+        Minimal confidence : {min_conf}% \n
         """)
 
     elif st.session_state["computer"]:
         freq_item_set, min_sup, min_conf = function_input(1)
         st.info(f"""\
-Frequent itemset   : {freq_item_set } \n
-Minimal support    : {min_sup} \n
-Minimal confidence : {min_conf} \n """)
+Frequent itemset   : {freq_item_set} item \n
+Minimal support    : {min_sup}% \n
+Minimal confidence : {min_conf}% \n """)
     else:
         pass
 
@@ -124,7 +129,7 @@ Minimal confidence : {min_conf} \n """)
 
 
     # deklarasikan fitur buat list produk yang sering dibeli dari list produk dengan list bersarang
-    def create_product_frequent_list(product_list):
+    def create_one_product_frequent_list(product_list):
         product_list = product_list
         product_frequent_list = []
 
@@ -133,6 +138,27 @@ Minimal confidence : {min_conf} \n """)
                 product_frequent_list.append(product_list[i][j])
 
         return product_frequent_list
+
+    def create_two_product_frequent_list(product_list):
+        product_list = product_list
+        product_frequent_list = []
+
+        for i in range(len(product_list)):
+            for j in range(len(product_list[i])):
+                product_frequent_list.append([product_list[i][j], product_list[i][j-1]])
+
+        return product_frequent_list
+
+    def create_three_product_frequent_list(product_list):
+        product_list = product_list
+        product_frequent_list = []
+
+        for i in range(len(product_list)):
+            for j in range(len(product_list[i])-1):
+                product_frequent_list.append(
+                    {product_list[i][j], product_list[i][j - 1], product_list[i][j - 2]})
+
+        return list(product_frequent_list)
 
 
     # deklarasikan fitur buat list produk dari list produk yang sering dibeli serta hasilkan list tersebut
@@ -183,7 +209,7 @@ Minimal confidence : {min_conf} \n """)
 
     st.info(f"Jumlah transaksi : {len(product_list)} transaksi")
 
-    product_frequent_list = create_product_frequent_list(product_list)
+    product_frequent_list = create_one_product_frequent_list(product_list)
 
     st.info(f"Jumlah stok yang terjual : {len(product_frequent_list)} unit")
 
@@ -208,79 +234,88 @@ Minimal confidence : {min_conf} \n """)
                 pass
 
     two_itemset_list = []
+    three_itemset_list = []
 
-    for i in range(len(one_itemset_list)):
-        for j in range(len(one_itemset_list)):
-            if one_itemset_list[i] == one_itemset_list[j]:
-                pass
+    if len(one_itemset_list) > 1:
+
+        two_itemset_list = []
+
+        for index in range(len(one_itemset_list)):
+            two_itemset_list.append([one_itemset_list[index], one_itemset_list[index-1]])
+
+        frequent_two_item_list = create_two_product_frequent_list(product_list)
+
+        # two_dist_itemset_list = []
+
+        dist_two_itemset_list = [
+            list(two_itemset_list)
+            for two_itemset_list in set(frozenset(two_itemset) for two_itemset in two_itemset_list)]
+
+        two_itemset_num = []
+
+        dist_two_itemset_list.sort(reverse=False)
+        frequent_two_item_list.sort(reverse=False)
+        for dist_two_itemset in dist_two_itemset_list:
+            two_itemset_num.append(frequent_two_item_list.count(dist_two_itemset))
+
+        two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(dist_two_itemset_list,
+                                                                                         two_itemset_num, freq_item_set)
+
+        with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar "
+                         f"{min_sup}% "):
+            if len(two_itemset_min_sup_product_list) > 0:
+                st.info(f"Jumlah produk min-sup dengan itemset 2 : {len(two_itemset_min_sup_product_list)}")
+                for two_fixed_itemset in two_itemset_list:
+                    st.write(f"{', '.join(two_fixed_itemset)}")
             else:
-                two_itemset_list.append([one_itemset_list[i], one_itemset_list[j]])
+                pass
 
-    st.info(f"Jumlah data dengan itemset 2 : {len(two_itemset_list)} ")
+    if len(two_itemset_list) > 1:
+        three_itemset_list = []
 
-    with st.expander("Gambaran data"):
-        st.write(two_itemset_list)
+        frequent_three_item_list = create_three_product_frequent_list(product_list)
 
-    frequent_two_item_list = []
-    count = 0
+        for index1 in range(len(two_itemset_list)):
+            for index2 in range(len(two_itemset_list[index1])):
+                three_itemset_list.append({two_itemset_list[index1][index2],
+                                           two_itemset_list[index1][index2-1],
+                                           two_itemset_list[index1][index2-2]})
 
-    for transaction in product_list:
-        for i in range(len(transaction)):
-            for j in range(len(transaction[i])):
-                frequent_two_item_list.append([transaction[i][j], transaction[i][j-1]])
+        dist_three_itemset_list = [
+            list(three_itemset_list)
+            for three_itemset_list in set(frozenset(three_itemset) for three_itemset in three_itemset_list)]
 
-    st.info(f"{len(frequent_two_item_list)}")
+        three_itemset_num = []
+        dist_three_itemset_list.sort(reverse=False)
+        frequent_three_item_list.sort(reverse=False)
+        for dist_three_itemset in dist_three_itemset_list:
+            three_itemset_num.append(frequent_three_item_list.count(set(dist_three_itemset)))
 
-    # two_dist_itemset_list = []
+        three_itemset_min_sup_product_list, three_itemset_list = create_stock_based_products(
+            dist_three_itemset_list, three_itemset_num, freq_item_set)
 
-    dist_two_itemset_list = [
-        list(two_itemset_list)
-        for two_itemset_list in set(frozenset(two_itemset) for two_itemset in two_itemset_list)]
-
-    st.info(f"Jumlah data beda pasangan dengan dengan itemset 2 : {len(dist_two_itemset_list)} ")
-
-    def display_count_of_two_itemset():
-        if len(two_itemset_list) > 0:
-            st.info(len(two_itemset_list))
-        else:
-            pass
-
-    with st.expander("Keterangan 1"):
-        if len(dist_two_itemset_list) > 0 and len(frequent_two_item_list) > 0:
-            # st.info(dist_two_itemset_list)
-            st.info(len(dist_two_itemset_list))
-            st.info(len(frequent_two_item_list))
-        else:
-            pass
-
-
-    two_itemset_num = []
-
-    for dist_two_itemset in dist_two_itemset_list:
-        two_itemset_num.append(frequent_two_item_list.count(dist_two_itemset))
-
-
-
-    two_itemset_min_sup_product_list, two_itemset_list = create_stock_based_products(dist_two_itemset_list,
-                                                                                     two_itemset_num, freq_item_set)
-
-    st.info(two_itemset_num)
-    st.info(len(two_itemset_num))
-    st.info(len(two_itemset_list))
-    st.info(len(two_itemset_min_sup_product_list))
-
-    with st.expander(f"Tampilan data produk dengan itemset = 2 dan minimal support sebesar "
-                     f"{round(min_sup)}% "):
-        if len(two_itemset_min_sup_product_list) > 0:
-            st.info(f"Jumlah produk min-sup dengan itemset 2 : {len(two_itemset_min_sup_product_list)}")
-            for two_fixed_itemset in two_itemset_list:
-                st.write(f"{' '.join(two_fixed_itemset)}")
-        else:
-            pass
+        with st.expander(f"Tampilan data produk dengan itemset = 3 dan minimal support sebesar "
+                         f"{min_sup}% "):
+            if len(three_itemset_min_sup_product_list) > 0:
+                st.info(f"Jumlah produk min-sup dengan itemset 3 : {len(three_itemset_min_sup_product_list)}")
+                for three_fixed_itemset in three_itemset_list:
+                    st.write(f"{', '.join(three_fixed_itemset)}")
+            else:
+                pass
 
     with st.expander("Simpulan dan saran"):
-        for one_itemset in one_itemset_list:
-            st.write(f"Restock barang {one_itemset} ")
+
+        st.info(f"Jumlah transaksi dengan 1 barang : {len(one_itemset_list)} transaksi")
+        for index, one_itemset in enumerate(one_itemset_list):
+            st.write(f" {index+1}. {one_itemset} ")
+
+        st.info(f"Jumlah transaksi dengan 2 barang : {len(two_itemset_list)} transaksi")
+        for index, two_itemset in enumerate(two_itemset_list):
+            st.write(f" {index + 1}. {two_itemset} ")
+
+        st.info(f"Jumlah transaksi dengan 3 barang : {len(three_itemset_list)} transaksi")
+        for index, three_itemset in enumerate(three_itemset_list):
+            st.write(f" {index + 1}. {three_itemset} ")
 
 except ValueError:
     st.write("Selamat mencoba")
