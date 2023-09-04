@@ -1,6 +1,9 @@
 # Market Basket Analyzer
 Versi 1.1.1
 
+Link langsung aplikasi web
+https://market-basket-1.streamlit.app/
+
 Ini adalah aplikasi pembaca file csv sekaligus analisis transaksi dari file tersebut.
 
 Input yang digunakan adalah file .csv
