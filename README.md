@@ -18,9 +18,21 @@ Tidak hanya itu input user sangat **penting** melalui 3 input
 2. Input minimal support
 3. Input minimal confidence
 
-Proses yang digunakan adalah algoritma Apriori sekaligus _association rules_ yang ditetapkan dari user.
+Proses yang digunakan adalah algoritma Apriori sekaligus _association rules_ yang ditetapkan dari user dan komputer.
 
-Output yang diharapkan adalah tampilan nama produk yang distok ulang.
+Output yang diharapkan bisa berupa
+
+1. Tampilan data transaksi dengan itemset 1 
+2. Tampilan data transaksi dengan itemset 2
+3. Tampilan data transaksi dengan itemset 3
+
+dengan minimal support dan minimal confidence yang ditetapkan.
+
+Saran dan rekomendasi
+
+1. Bisa upload lebih dari 2 file dalam satu aplikasi web
+2. Bisa digunakan dalam proses analisis pola transaksi dengan integrasi program kasir
+3. Bisa digunakan dalam proses pendukung keputusan manajemen barang masuk dan barang keluar
 
 Jikalau Anda mengalami kendala, Anda bisa menghubungi langsung melalui email berikut.
 **naufalmaulana2000@gmail.com** atau **naufalmaulanamaliksr@gmail.com** dan jangan lupa konfirmasi via Whatsapp melalui
@@ -30,6 +42,8 @@ Terima kasih atas perhatian Anda
 
 Dan selamat mencoba
 
-Semoga berhasil,
+Semoga berhasil.
+
+Semangat menciptakan solusi,
 
 Naufal a.k.a. Novus
